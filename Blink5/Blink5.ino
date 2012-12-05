@@ -1,5 +1,5 @@
 /*
-Binary LED Clock
+Binary LED Clock Using Interupt to increment the second counter
  
  November 2012
  Alastair Montgomery
