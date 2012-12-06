@@ -1,3 +1,12 @@
+/*
+
+Control 10 LEDs using an array and mask to display binary values.
+
+Alastair Montgomery
+
+November 2012
+
+*/
 
 int numLed = 10;
 int ledpins[] = {
@@ -29,5 +38,3 @@ void loop() {
   delay(1000);
   counter++;
 }
-
-
