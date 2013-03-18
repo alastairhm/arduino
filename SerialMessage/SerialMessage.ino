@@ -11,7 +11,7 @@
 LiquidCrystal lcd(8, 9, 4, 5, 6, 7);
 
 //Default Message
-char msg[256] = "Serial Message Version 1.00";
+char msg[256] = "Serial Message Version 1.01";
 char buffer[256];
 int newMsg = true;
 int previous = 0;
