@@ -1,6 +1,6 @@
 // Auto scroll a message on the LCD and receive new messages via Serial port.
 // Alastair Montgomery (c) 2013
-// Version 1.00
+// Version 1.01
  
 // include the library code:
 #include <LiquidCrystal.h>
@@ -14,12 +14,45 @@ LiquidCrystal lcd(8, 9, 4, 5, 6, 7);
 char msg[256] = "Serial Message Version 1.00";
 char buffer[256];
 int newMsg = true;
-int scrollAmount = 0;
+int previous = 0;
+int pos = 0;
 
 void setup() {
   // set up the LCD's number of columns and rows: 
   lcd.begin(16,2);
   Serial.begin(9600);
+}
+
+void printLine(int refreshSeconds, int lineNum){
+  //Check if the current second since restart is a mod of refresh seconds , 
+  //if it is then update the display , it must also not equal the previously 
+  //stored value to prevent duplicate refreshes
+  if((millis()/1000) % refreshSeconds == 0 && previous != (millis()/1000)){
+    previous =  (millis()/1000);  //Store the current time we entered for comparison on the next cycle
+    lcd.setCursor(0, lineNum);    //Set our draw position , set second param to 0 to use the top line
+    char lcdTop[16];              //Create a char array to store the text for the line
+    int copySize = 16;            // What is the size of our screen , this could probably be moved outside the loop but its more dynamic like this
+    if(strlen(msg) < copySize)
+    {
+        //if the msg is smaller than the current buffer use its length instead;
+        copySize = strlen(msg);
+    }
+    //Store the current position temporarily and invert its sign if its negative since we are going in reverse
+    int tempPos = pos;
+    if(tempPos < 0)
+    {
+        tempPos = -(tempPos);
+    }
+    //Build the lcd text by copying the required text out of our template msg variable 
+    memcpy(&lcdTop[0],&msg[tempPos],copySize);
+    lcd.print(lcdTop);            //Print it from position 0
+    //Increase the current position and check if the position + 16 (screen size) would be larger than the msg length , if it is go in reverse by inverting the sign.
+    pos += 1;
+    if(pos +copySize >= strlen(msg))
+    {
+      pos = -(pos);
+    }
+  }
 }
 
 void loop() {
@@ -33,38 +66,17 @@ void loop() {
     }
     buffer[i] = '\0';
     strcpy(msg,buffer);
-
     newMsg = true;
   }
  
   if (newMsg){
     lcd.noAutoscroll();
     lcd.clear();
-    scrollAmount = strlen(msg)-16;
     newMsg = false;
     lcd.setCursor(0, 0);  
-    lcd.print("***New Message***");    
+    lcd.print("New Message");    
   }
-  
-  // set the cursor to (0,1):
-  lcd.setCursor(0, 1);  
-  lcd.print(msg);
-  delay(500);
-
-  // set the cursor to (16,1):
-  lcd.setCursor(16,0);
-  // set the display to automatically scroll:;
-  lcd.autoscroll();
-  //lcd.noAutoscroll();
-  // print from 0 to 9:
-  for (int thisChar = 0; thisChar < scrollAmount+16; thisChar++) {
-    lcd.print(" ");
-    delay(700);
-  }
-  
-  // turn off automatic scrolling
-  lcd.noAutoscroll();  
-  // clear screen for the next loop:
-  lcd.clear();
+ 
+  printLine(1,1);
 }
 
