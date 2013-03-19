@@ -1,6 +1,6 @@
 // Auto scroll a message on the LCD and receive new messages via Serial port.
 // Alastair Montgomery (c) 2013
-// Version 1.01
+// Version 1.02
  
 // include the library code:
 #include <LiquidCrystal.h>
@@ -10,8 +10,11 @@
 // below for SainSmart LCD Shield
 LiquidCrystal lcd(8, 9, 4, 5, 6, 7);
 
+const int ledWidth = 16;
+const int ledDepth = 2;
+
 //Default Message
-char msg[256] = "Serial Message Version 1.00";
+char msg[256] = "Serial Message Version 1.02";
 char buffer[256];
 int newMsg = true;
 int previous = 0;
@@ -19,7 +22,7 @@ int pos = 0;
 
 void setup() {
   // set up the LCD's number of columns and rows: 
-  lcd.begin(16,2);
+  lcd.begin(ledWidth,ledDepth);
   Serial.begin(9600);
 }
 
@@ -30,8 +33,8 @@ void printLine(int refreshSeconds, int lineNum){
   if((millis()/1000) % refreshSeconds == 0 && previous != (millis()/1000)){
     previous =  (millis()/1000);  //Store the current time we entered for comparison on the next cycle
     lcd.setCursor(0, lineNum);    //Set our draw position , set second param to 0 to use the top line
-    char lcdTop[16];              //Create a char array to store the text for the line
-    int copySize = 16;            // What is the size of our screen , this could probably be moved outside the loop but its more dynamic like this
+    char lcdTop[ledWidth];              //Create a char array to store the text for the line
+    int copySize = ledWidth;            // What is the size of our screen , this could probably be moved outside the loop but its more dynamic like this
     if(strlen(msg) < copySize)
     {
         //if the msg is smaller than the current buffer use its length instead;
@@ -51,6 +54,8 @@ void printLine(int refreshSeconds, int lineNum){
     if(pos +copySize >= strlen(msg))
     {
       pos = -(pos);
+      lcd.setCursor(0, 0);  
+      lcd.print("           ");
     }
   }
 }
@@ -67,6 +72,7 @@ void loop() {
     buffer[i] = '\0';
     strcpy(msg,buffer);
     newMsg = true;
+    pos = 0;
   }
  
   if (newMsg){
