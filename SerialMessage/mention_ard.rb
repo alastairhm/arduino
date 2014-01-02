@@ -1,3 +1,4 @@
+#!/usr/bin/env ruby
 # Find your Twitter Mentions and send them to Arduino on Serial Port
 
 require "rubygems"
