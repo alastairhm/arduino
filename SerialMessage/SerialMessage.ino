@@ -1,6 +1,6 @@
 // Auto scroll a message on the LCD and receive new messages via Serial port.
 // Alastair Montgomery (c) 2013
-// Version 1.03
+// Version 1.04
 
 // include the library code:
 #include <LiquidCrystal.h>
@@ -14,8 +14,9 @@ const int ledWidth = 16;
 const int ledDepth = 2;
 
 //Default Message
-char msg[256] = "Serial Message Version 1.03";
-char info[256] = "New Message";
+char oldmsg[256] = "Old message";
+char msg[256] = "Serial Message Version 1.04";
+char info[256] = "Hello :)";
 char buffer[256];
 int newMsg = true;
 int previous[ledDepth] = {
@@ -82,18 +83,19 @@ int serialRead(char message[]) {
 
 void loop() {
 
+  strcpy(oldmsg,msg);
   newMsg = serialRead(msg);
 
   if (newMsg){
     lcd.noAutoscroll();
     lcd.clear();
     newMsg = false;
-    strcpy(info,"New Message"); 
-    pos = {0,0};     
+    strcpy(info,oldmsg); 
+    pos[0] = 0;
+    pos[1] = 0;
   }
 
   printLine(1,0,info);
   printLine(1,1,msg);
 }
-
 
