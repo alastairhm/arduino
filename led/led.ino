@@ -13,16 +13,18 @@ void setup() {
 
 void loop() {
     for (val = 255; val>0; val--) {
-        analogWrite(11, val);
-        analogWrite(10, 255-val);
-        analogWrite(9, 128-val);
+        analogWrite(redpin, val);
+        analogWrite(bluepin, 255-val);
+        analogWrite(greenpin, 128-val);
         delay(1);
+        Serial.println(val, DEC);
     }
     for (val = 0; val <255; val++) {
-        analogWrite(11, val);
-        analogWrite(10, 255-val);
-        analogWrite(9, 128-val);
+        analogWrite(redpin, val);
+        analogWrite(bluepin, 255-val);
+        analogWrite(greenpin, 128-val);
         delay (1);
+        Serial.println(val, DEC);
     }
-    Serial.println(val, DEC);
+    
 }
